@@ -1,0 +1,72 @@
+{
+    "name": "encodia/laravel-health-env-vars",
+    "description": "Custom check for Spaties' Laravel Health - Ensure every .env variable you need has been set",
+    "keywords": [
+        "encodia",
+        "laravel",
+        "spatie",
+        "health",
+        "checks",
+        "env",
+        "environment",
+        "laravel-health-env-vars"
+    ],
+    "homepage": "https://github.com/encodia/laravel-health-env-vars",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Erik D'Ercole",
+            "email": "erik.dercole@encodia.it",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/contracts": "^9.0",
+        "spatie/laravel-health": "^1.8",
+        "spatie/laravel-package-tools": "^1.9.2"
+    },
+    "require-dev": {
+        "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.5",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Encodia\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Encodia\\EnvVars\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Encodia\\EnvVars\\EnvVarsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
