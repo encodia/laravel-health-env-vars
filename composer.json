@@ -63,7 +63,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Encodia\\Health\\Checks\\EnvVarsServiceProvider"
+                "Encodia\\EnvVarsServiceProvider"
             ]
         }
     },

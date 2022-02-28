@@ -1,6 +1,6 @@
 <?php
 
-namespace Encodia\Health\Checks;
+namespace Encodia;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

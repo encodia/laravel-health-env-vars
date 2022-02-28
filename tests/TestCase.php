@@ -2,7 +2,7 @@
 
 namespace Encodia\EnvVars\Tests;
 
-use Encodia\Health\Checks\EnvVarsServiceProvider;
+use Encodia\EnvVarsServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
