@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/contracts": "^9.0",
+        "illuminate/contracts": "^8.75|^9.0",
         "spatie/laravel-health": "^1.8",
         "spatie/laravel-package-tools": "^1.9.2"
     },
