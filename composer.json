@@ -1,6 +1,6 @@
 {
     "name": "encodia/laravel-health-env-vars",
-    "description": "Custom check for Spatis's Laravel Health - Ensure every .env variable you need has been set",
+    "description": "Custom check for Spatie's Laravel Health - Ensure every .env variable you need has been set",
     "keywords": [
         "encodia",
         "laravel",
