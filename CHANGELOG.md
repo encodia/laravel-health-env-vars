@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## 1.3.0 - 2022-10-05
+
+### added
+
+- improve documentation adding *Caveats* section in README.md
+
 ## 1.2.3 - 2022-03-24
 
 ### fix

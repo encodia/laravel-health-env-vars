@@ -19,7 +19,6 @@ environment, but you don't need this while developing locally.
 Who has never lost several minutes before realizing that, let's say in `production`,
 something is not working because one or more variables have not been valued?
 
-
 ## Installation
 
 You can install the package via composer:
@@ -27,7 +26,6 @@ You can install the package via composer:
 ```bash
 composer require encodia/laravel-health-env-vars
 ```
-
 
 ## Usage
 
@@ -98,6 +96,19 @@ Health::checks([
         ]);
 ]);
 ```
+
+## Caveats
+
+During your deployment process, be sure to run EnvVars checks **before**
+caching your configuration!
+
+Why? After running `php artisan config:cache`, any `env('WHATEVER_NAME')` will return `null`, so
+your EnvVars checks will fail.
+
+Please check
+
+* [Laravel documentation](https://laravel.com/docs/9.x/configuration#configuration-caching)
+* [env() Gotcha in Laravel When Caching Configuration](https://andy-carter.com/blog/env-gotcha-in-laravel-when-caching-configuration)
 
 ## Testing
 
