@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## 1.3.1 - 2022-10-05
+
+### fixed
+
+- change condition to fix PHPStan check
+
 ## 1.3.0 - 2022-10-05
 
 ### added
