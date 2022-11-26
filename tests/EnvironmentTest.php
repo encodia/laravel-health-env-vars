@@ -6,7 +6,6 @@ it('sets the desidered current environment', function () {
 
     expect(mockCurrentEnvironment($desired))
         ->toEqual($desired)
-        ->not->toEqual($initial);
-
-    expect(currentEnvironment())->toEqual($desired);
+        ->not->toEqual($initial)
+        ->and(currentEnvironment())->toEqual($desired);
 });
