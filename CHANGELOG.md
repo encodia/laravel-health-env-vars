@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## 1.4.0 - 2022-11-26
+
+### added
+
+- add `requireVarsForEnvironments`: check if some variables have been set only in the given environments (
+  e.g. `['qa', 'production']`)
+- more comments in the code
+
+### fix
+
+- typos
+
 ## 1.3.1 - 2022-10-05
 
 ### fixed

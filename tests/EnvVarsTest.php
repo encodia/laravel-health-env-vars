@@ -1,11 +1,7 @@
 <?php
 
 use Encodia\Health\Checks\EnvVars;
-use Illuminate\Support\Env;
 use Spatie\Health\Enums\Status;
-
-beforeEach(fn () => Env::enablePutenv());
-afterEach(fn () => mockCurrentEnvironment('testing'));
 
 it('returns ok when no variable names have been provided', function () {
     $result = EnvVars::new()->run();

@@ -1,6 +1,6 @@
 <?php
 
-it('sets the desidered current environment', function () {
+it('sets the desired current environment', function () {
     $initial = currentEnvironment();
     $desired = 'staging';
 

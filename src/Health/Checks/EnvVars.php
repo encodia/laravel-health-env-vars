@@ -12,6 +12,11 @@ class EnvVars extends Check
     protected Collection $requiredVars;
     protected Collection $environmentSpecificVars;
 
+    /**
+     * Run the check and return the Result
+     *
+     * @return Result
+     */
     public function run(): Result
     {
         $this->requiredVars ??= Collection::make();
@@ -53,6 +58,12 @@ class EnvVars extends Check
             ->notificationMessage(trans('health-env-vars::translations.every_var_has_been_set'));
     }
 
+    /**
+     * Require the given variable names to be set (no matter in which environment)
+     *
+     * @param  array<string>  $names
+     * @return $this
+     */
     public function requireVars(array $names): self
     {
         $this->requiredVars = Collection::make($names);
@@ -60,6 +71,13 @@ class EnvVars extends Check
         return $this;
     }
 
+    /**
+     * Require the given variable to be set in the given environment
+     *
+     * @param  string  $environment
+     * @param  array<string>  $names
+     * @return $this
+     */
     public function requireVarsForEnvironment(string $environment, array $names): self
     {
         // This method could be called several times (e.g. for different environments)
@@ -69,6 +87,20 @@ class EnvVars extends Check
         if (! $this->environmentSpecificVars->has($environment)) {
             $this->environmentSpecificVars->put($environment, Collection::make($names));
         }
+
+        return $this;
+    }
+
+    /**
+     * Require the given variable names to be set in the given environments
+     *
+     * @param  array<string>  $environments
+     * @param  array<string>  $names
+     * @return $this
+     */
+    public function requireVarsForEnvironments(array $environments, array $names): self
+    {
+        collect($environments)->each(fn ($environment) => $this->requireVarsForEnvironment($environment, $names));
 
         return $this;
     }

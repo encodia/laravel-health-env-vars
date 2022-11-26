@@ -8,7 +8,7 @@ uses(TestCase::class)->in(__DIR__);
 /**
  * Initialize .env variables with the given names and values
  *
- * @param  array  $vars
+ * @param  array<string, string>  $vars
  * @return void
  */
 function initEnvVars(array $vars): void

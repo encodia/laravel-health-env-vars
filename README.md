@@ -97,6 +97,52 @@ Health::checks([
 ]);
 ```
 
+It's very likely that you need some variables in multiple environments, but not in all of them.
+
+For example, you need to set `BUGSNAG_API_KEY` only in these environments:
+
+- `qa`
+- `production`
+
+but not in `local`, `staging`, `demo` or whatever.
+
+You could chain multiple `requireVarsForEnvironment` calls but, in this case, it's to use `requireVarsForEnvironments`:
+
+```php
+// typically, in a service provider
+
+use Spatie\Health\Facades\Health;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Encodia\Health\Checks\EnvVars;
+
+Health::checks([
+    // ...
+    // (other checks)
+    // ...
+    
+    /*
+     * Check that SOME_API_KEY and MAIL_FROM_ADDRESS variables are
+     * set (no matter in which environment).
+     * 
+     * Only in staging, ensure EXTENDED_DEBUG_MODE has been set.
+     * 
+     * Additionally, only in qa and production environments,
+     * ensure BUGSNAG_API_KEY has been set.
+     */
+    EnvVars::new()
+        ->requireVars([
+            'SOME_API_KEY',
+            'MAIL_FROM_ADDRESS',
+        ])
+        ->requireVarsForEnvironment('staging', [
+            'EXTENDED_DEBUG_MODE'
+        ])
+        ->requireVarsForEnvironments(['qa', 'production'], [
+            'BUGSNAG_API_KEY'
+        ]);
+]);
+```
+
 ## Caveats
 
 During your deployment process, be sure to run EnvVars checks **before**
