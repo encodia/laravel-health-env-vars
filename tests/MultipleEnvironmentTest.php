@@ -7,7 +7,7 @@ const ENVIRONMENTS = ['staging', 'qa', 'production'];
 
 it(
     "returns an error if vars are required in multiple environments and at least one var hasn't been set in the ".
-    "current environment",
+    'current environment',
     function (string $currentEnvironment) {
         $environments = ENVIRONMENTS;
         $vars = ['VAR1', 'VAR2'];

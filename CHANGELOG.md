@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## 1.5.0 - 2023-01-14
+
+### added
+
+- support for PHP `8.2`
+- chore: use Laravel Pint
+
 ## 1.4.0 - 2022-11-26
 
 ### added

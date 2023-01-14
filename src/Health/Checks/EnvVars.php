@@ -10,6 +10,7 @@ use Spatie\Health\Checks\Result;
 class EnvVars extends Check
 {
     protected Collection $requiredVars;
+
     protected Collection $environmentSpecificVars;
 
     /**
