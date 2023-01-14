@@ -73,7 +73,7 @@ class EnvVars extends Check
     }
 
     /**
-     * Require the given variable to be set in the given environment
+     * Require the given variable names to be set in the given environment
      *
      * @param  string  $environment
      * @param  array<string>  $names
