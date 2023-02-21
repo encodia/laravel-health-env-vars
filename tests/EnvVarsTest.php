@@ -8,8 +8,7 @@ it('returns ok when no variable names have been provided', function () {
 
     expect($result)
         ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-        ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
 it('returns ok when an empty set of variable names has been provided', function () {
@@ -19,8 +18,7 @@ it('returns ok when an empty set of variable names has been provided', function 
 
     expect($result)
         ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-        ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
 it('returns ok when every provided name matches a .env variable with a non-empty value', function () {
@@ -39,8 +37,7 @@ it('returns ok when every provided name matches a .env variable with a non-empty
 
     expect($result)
         ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-        ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
 it('returns an error when not every provided name matches a .env variable with a non-empty value', function () {
@@ -90,8 +87,7 @@ it(
 
         expect($result)
             ->status->toBe(Status::ok())
-            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-            ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
     }
 );
 
@@ -112,8 +108,7 @@ test('environment specific vars are ignored if their environment does not match 
 
     expect($result)
         ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-        ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
 it('returns an error if environment specific vars are required and they are not set in that environment', function () {

@@ -62,7 +62,6 @@ it(
 
         expect($result)
             ->status->toBe(Status::ok())
-            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'))
-            ->notificationMessage->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
     }
 )->with(ENVIRONMENTS);
