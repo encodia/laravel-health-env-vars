@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.5.1 - 2023-02-21
+
+### fixed
+
+- prevent sending notifications when status is OK (thanks to [https://github.com/maxkalahur]())
+
 ## 1.5.1 - 2023-02-21
 
 ### fixed
@@ -20,7 +26,7 @@ All notable changes to `laravel-health-env-vars` will be documented in this file
 ### added
 
 - add `requireVarsForEnvironments`: check if some variables have been set only in the given environments (
-  e.g. `['qa', 'production']`)
+- e.g. `['qa', 'production']`)
 - more comments in the code
 
 ### fix
