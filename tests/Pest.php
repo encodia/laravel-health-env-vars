@@ -9,7 +9,6 @@ uses(TestCase::class)->in(__DIR__);
  * Initialize .env variables with the given names and values
  *
  * @param  array<string, string>  $vars
- * @return void
  */
 function initEnvVars(array $vars): void
 {
@@ -21,9 +20,6 @@ function initEnvVars(array $vars): void
 /**
  * Make Laravel 'think' code is running in $environment environment
  * and return the current one
- *
- * @param  string  $environment
- * @return string
  */
 function mockCurrentEnvironment(string $environment): string
 {
