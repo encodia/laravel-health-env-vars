@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## 1.5.1 - 2023-02-21
+
+### fixed
+
+- prevent sending notifications when status is OK (thanks to [https://github.com/maxkalahur]())
+
 ## 1.5.0 - 2023-01-14
 
 ### added
