@@ -55,8 +55,7 @@ class EnvVars extends Check
         }
 
         return $result->ok()
-            ->shortSummary(trans('health-env-vars::translations.every_var_has_been_set'))
-            ->notificationMessage(trans('health-env-vars::translations.every_var_has_been_set'));
+            ->shortSummary(trans('health-env-vars::translations.every_var_has_been_set'));
     }
 
     /**
