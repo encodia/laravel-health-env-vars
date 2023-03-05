@@ -19,6 +19,12 @@ environment, but you don't need this while developing locally.
 Who has never lost several minutes before realizing that, let's say in `production`,
 something is not working because one or more variables have not been valued?
 
+## Requirements
+
+`encodia/laravel-health-env-vars` requires **PHP 8.0+**, **Laravel 8.0+**.
+
+**PHP 8.1+** is required with **Laravel 10**.
+
 ## Installation
 
 You can install the package via composer:
