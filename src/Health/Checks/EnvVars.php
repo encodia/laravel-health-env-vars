@@ -9,8 +9,10 @@ use Spatie\Health\Checks\Result;
 
 class EnvVars extends Check
 {
+    /** @var Collection<int,string> */
     protected Collection $requiredVars;
 
+    /** @var Collection<int,string> */
     protected Collection $environmentSpecificVars;
 
     /**
@@ -18,8 +20,8 @@ class EnvVars extends Check
      */
     public function run(): Result
     {
-        $this->requiredVars ??= Collection::make();
-        $this->environmentSpecificVars ??= Collection::make();
+        $this->requiredVars ??= Collection::empty();
+        $this->environmentSpecificVars ??= Collection::empty();
 
         $result = Result::make();
 
@@ -36,9 +38,11 @@ class EnvVars extends Check
                 );
         }
 
+        /** @var string $currentEnvironment */
+        $currentEnvironment = App::environment();
         // Same for environment specific vars (if any), returning different error messages
         $missingVars = $this->missingVars(
-            $this->environmentSpecificVars->get(App::environment(), Collection::make())
+            $this->environmentSpecificVars->get($currentEnvironment, Collection::empty())
         );
 
         if ($missingVars->count() > 0) {
@@ -59,12 +63,12 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set (no matter in which environment)
      *
-     * @param  array<string>  $names
+     * @param array<int,string> $names
      * @return $this
      */
     public function requireVars(array $names): self
     {
-        $this->requiredVars = Collection::make($names);
+        $this->requiredVars = collect($names);
 
         return $this;
     }
@@ -72,17 +76,17 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set in the given environment
      *
-     * @param  array<string>  $names
+     * @param array<int,string> $names
      * @return $this
      */
     public function requireVarsForEnvironment(string $environment, array $names): self
     {
         // This method could be called several times (e.g. for different environments)
 
-        $this->environmentSpecificVars ??= Collection::make();
+        $this->environmentSpecificVars ??= Collection::empty();
 
         if (! $this->environmentSpecificVars->has($environment)) {
-            $this->environmentSpecificVars->put($environment, Collection::make($names));
+            $this->environmentSpecificVars->put($environment, collect($names));
         }
 
         return $this;
@@ -91,8 +95,8 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set in the given environments
      *
-     * @param  array<string>  $environments
-     * @param  array<string>  $names
+     * @param array<int,string> $environments
+     * @param array<int,string> $names
      * @return $this
      */
     public function requireVarsForEnvironments(array $environments, array $names): self
@@ -105,10 +109,13 @@ class EnvVars extends Check
     /**
      * Given a Collection of $vars names, check which of them are not set (in the current environment)
      * and return the list of names as a Collection
+     *
+     * @param Collection<int,string> $vars
+     * @return Collection<int,string>
      */
     protected function missingVars(Collection $vars): Collection
     {
-        $missingVars = Collection::make();
+        $missingVars = Collection::empty();
 
         $vars->each(function (string $name) use ($missingVars) {
             $value = getenv($name);
