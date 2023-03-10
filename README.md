@@ -2,6 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/encodia/laravel-health-env-vars.svg?style=flat-square)](https://packagist.org/packages/encodia/laravel-health-env-vars)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/encodia/laravel-health-env-vars/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/encodia/laravel-health-env-vars/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![PHPStan](https://github.com/encodia/laravel-health-env-vars/actions/workflows/phpstan.yml/badge.svg?branch=main)](https://github.com/encodia/laravel-health-env-vars/actions/workflows/phpstan.yml)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/encodia/laravel-health-env-vars/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/encodia/laravel-health-env-vars/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/encodia/laravel-health-env-vars.svg?style=flat-square)](https://packagist.org/packages/encodia/laravel-health-env-vars)
 
