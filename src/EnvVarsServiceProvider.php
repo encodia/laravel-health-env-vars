@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Encodia;
 
 use Spatie\LaravelPackageTools\Package;
