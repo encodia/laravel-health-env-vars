@@ -63,7 +63,7 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set (no matter in which environment)
      *
-     * @param array<int,string> $names
+     * @param  array<int,string>  $names
      * @return $this
      */
     public function requireVars(array $names): self
@@ -76,7 +76,7 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set in the given environment
      *
-     * @param array<int,string> $names
+     * @param  array<int,string>  $names
      * @return $this
      */
     public function requireVarsForEnvironment(string $environment, array $names): self
@@ -95,8 +95,8 @@ class EnvVars extends Check
     /**
      * Require the given variable names to be set in the given environments
      *
-     * @param array<int,string> $environments
-     * @param array<int,string> $names
+     * @param  array<int,string>  $environments
+     * @param  array<int,string>  $names
      * @return $this
      */
     public function requireVarsForEnvironments(array $environments, array $names): self
@@ -110,7 +110,7 @@ class EnvVars extends Check
      * Given a Collection of $vars names, check which of them are not set (in the current environment)
      * and return the list of names as a Collection
      *
-     * @param Collection<int,string> $vars
+     * @param  Collection<int,string>  $vars
      * @return Collection<int,string>
      */
     protected function missingVars(Collection $vars): Collection
