@@ -66,6 +66,7 @@ class EnvVars extends Check
 
         /** @var string $successMessage */
         $successMessage = trans('health-env-vars::translations.every_var_has_been_set');
+
         return $result->ok()
             ->shortSummary($successMessage);
     }
