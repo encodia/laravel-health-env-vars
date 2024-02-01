@@ -31,13 +31,16 @@ class EnvVars extends Check
         $missingVars = $this->missingVars($this->requiredVars);
 
         if ($missingVars->count() > 0) {
+            /** @var string $shortSummaryMessage */
+            $shortSummaryMessage = trans('health-env-vars::translations.not_every_var_has_been_set');
+            /** @var string $failedMessage */
+            $failedMessage = trans('health-env-vars::translations.missing_vars_list', [
+                'list' => $missingVars->implode(','),
+            ]);
+
             return $result->meta($missingVars->toArray())
-                ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
-                ->failed(
-                    trans('health-env-vars::translations.missing_vars_list', [
-                        'list' => $missingVars->implode(','),
-                    ])
-                );
+                ->shortSummary($shortSummaryMessage)
+                ->failed($failedMessage);
         }
 
         /** @var string $currentEnvironment */
@@ -48,18 +51,23 @@ class EnvVars extends Check
         );
 
         if ($missingVars->count() > 0) {
+            /** @var string $shortSummaryMessage */
+            $shortSummaryMessage = trans('health-env-vars::translations.not_every_var_has_been_set');
+            /** @var string $failedMessage */
+            $failedMessage = trans('health-env-vars::translations.missing_vars_list_in_environment', [
+                'environment' => App::environment(),
+                'list' => $missingVars->implode(','),
+            ]);
+
             return $result->meta($missingVars->toArray())
-                ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
-                ->failed(
-                    trans('health-env-vars::translations.missing_vars_list_in_environment', [
-                        'environment' => App::environment(),
-                        'list' => $missingVars->implode(','),
-                    ])
-                );
+                ->shortSummary($shortSummaryMessage)
+                ->failed($failedMessage);
         }
 
+        /** @var string $successMessage */
+        $successMessage = trans('health-env-vars::translations.every_var_has_been_set');
         return $result->ok()
-            ->shortSummary(trans('health-env-vars::translations.every_var_has_been_set'));
+            ->shortSummary($successMessage);
     }
 
     /**
@@ -103,7 +111,7 @@ class EnvVars extends Check
      */
     public function requireVarsForEnvironments(array $environments, array $names): self
     {
-        collect($environments)->each(fn ($environment) => $this->requireVarsForEnvironment($environment, $names));
+        collect($environments)->each(fn (string $environment) => $this->requireVarsForEnvironment($environment, $names));
 
         return $this;
     }
@@ -113,7 +121,7 @@ class EnvVars extends Check
      * and return the list of names as a Collection
      *
      * @param  Collection<int,string>  $vars
-     * @return Collection<int,string>
+     * @return Collection<string,string>
      */
     protected function missingVars(Collection $vars): Collection
     {
