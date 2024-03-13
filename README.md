@@ -9,7 +9,7 @@
 [Laravel Health](https://github.com/spatie/laravel-health) by [Spatie](https://spatie.be/),
 in addition to providing some default checks, allows you to create your own.
 
-This package checks if all variables you need have been set in you `.env` file.
+This package checks if all variables you need have been set in your `.env` file.
 
 Some variables are needed in every environment; others only in specific ones.
 For example, you want to be sure that `BUGSNAG_API_KEY` has been set in your production
