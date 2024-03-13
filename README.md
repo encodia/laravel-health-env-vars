@@ -26,6 +26,8 @@ something is not working because one or more variables have not been valued?
 
 **PHP 8.1+** is required with **Laravel 10**.
 
+**PHP 8.2+** is required with **Laravel 11**.
+
 ## Installation
 
 You can install the package via composer:
