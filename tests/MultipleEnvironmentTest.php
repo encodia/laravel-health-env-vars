@@ -5,6 +5,53 @@ use Spatie\Health\Enums\Status;
 
 const ENVIRONMENTS = ['staging', 'qa', 'production'];
 
+afterEach(function () {
+    unsetEnvVars(['VAR1', 'VAR2', 'VAR3', 'VAR4']);
+});
+
+describe('when vars need to match values', function () {
+    it(
+        "returns an error if a var doesn't match the expected value in the current environment",
+        function (string $currentEnvironment) {
+            // ARRANGE
+
+            $environments = ENVIRONMENTS;
+            $variableName = 'VAR1';
+            $variableExpectedValue = 'expected value';
+            $variableActualValue = 'another value';
+            $missingList = "$variableName is set to '$variableActualValue' instead of '$variableExpectedValue'";
+
+            expect($currentEnvironment)->toBeIn($environments);
+            mockCurrentEnvironment($currentEnvironment);
+
+            // init variable with a value different from the expected one
+            initEnvVars([
+                $variableName => $variableActualValue,
+            ]);
+            expect(env($variableName))->not->toEqual($variableExpectedValue);
+
+            // ACT & ASSERT
+            $result = EnvVars::new()
+                ->requireVarsMatchValues([
+                    $variableName => $variableExpectedValue,
+                ])
+                ->run();
+
+            expect($result)
+                ->meta->toEqual([$variableName])
+                ->status->toBe(Status::failed())
+                ->shortSummary->toBe(trans('health-env-vars::translations.vars_not_matching_values'))
+                ->notificationMessage->toBe(
+                    trans('health-env-vars::translations.vars_not_matching_values_list', [
+                        'environment' => currentEnvironment(),
+                        'list' => $missingList,
+                    ])
+                );
+
+        }
+    )->with(ENVIRONMENTS);
+});
+
 it(
     "returns an error if vars are required in multiple environments and at least one var hasn't been set in the ".
     'current environment',

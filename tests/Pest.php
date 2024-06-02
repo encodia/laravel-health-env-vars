@@ -13,7 +13,17 @@ uses(TestCase::class)->in(__DIR__);
 function initEnvVars(array $vars): void
 {
     foreach ($vars as $name => $value) {
-        putenv("{$name}={$value}");
+        putenv("$name=$value");
+    }
+}
+
+/**
+ * Unset the given .env variables.
+ */
+function unsetEnvVars(array $vars): void
+{
+    foreach ($vars as $name) {
+        putenv($name);
     }
 }
 

@@ -14,18 +14,33 @@ class EnvVars extends Check
     /** @var Collection<int,string> */
     protected Collection $requiredVars;
 
-    /** @var Collection<int,string> */
+    /** @var Collection<string,mixed> */
+    protected Collection $requiredVarsWithValues;
+
+    /** @var Collection<string,string> */
     protected Collection $environmentSpecificVars;
+
+    /** @var Collection<string,array<string,mixed>> */
+    protected Collection $environmentSpecificVarsWithValues;
 
     /**
      * Run the check and return the Result
      */
     public function run(): Result
     {
-        $this->requiredVars ??= Collection::empty();
-        $this->environmentSpecificVars ??= Collection::empty();
+        $this->requiredVars ??= collect();
+        $this->environmentSpecificVars ??= collect();
+        $this->requiredVarsWithValues ??= collect();
 
         $result = Result::make();
+
+        // Check required vars with values
+        $check = $this->checkRequiredVarsWithValues($this->requiredVarsWithValues);
+        if ($check->hasFailed()) {
+            return $result->meta($check->meta)
+                ->shortSummary($check->summary)
+                ->failed($check->message);
+        }
 
         // Check all provided variable names match .env variables with non-empty value
         $missingVars = $this->missingVars($this->requiredVars);
@@ -43,9 +58,9 @@ class EnvVars extends Check
         /** @var string $currentEnvironment */
         $currentEnvironment = App::environment();
         // Same for environment specific vars (if any), returning different error messages
-        $missingVars = $this->missingVars(
-            $this->environmentSpecificVars->get($currentEnvironment, Collection::empty())
-        );
+        /** @var Collection<int,string> $environmentSpecificVars */
+        $environmentSpecificVars = $this->environmentSpecificVars->get($currentEnvironment, collect());
+        $missingVars = $this->missingVars($environmentSpecificVars);
 
         if ($missingVars->count() > 0) {
             return $result->meta($missingVars->toArray())
@@ -71,6 +86,20 @@ class EnvVars extends Check
     public function requireVars(array $names): self
     {
         $this->requiredVars = collect($names);
+
+        return $this;
+    }
+
+    /**
+     * Require the given variable names to be set (no matter in which environment) to the
+     * values supplied.
+     *
+     * @param  array<string,mixed>  $values
+     * @return $this
+     */
+    public function requireVarsMatchValues(array $values): self
+    {
+        $this->requiredVarsWithValues = collect($values);
 
         return $this;
     }
@@ -127,5 +156,39 @@ class EnvVars extends Check
         });
 
         return $missingVars;
+    }
+
+    /**
+     * @param  Collection<string,mixed>  $requiredVarsWithValues
+     */
+    protected function checkRequiredVarsWithValues(Collection $requiredVarsWithValues): CheckResultDto
+    {
+        $failingVarNames = collect();
+        $failingVarMessages = collect();
+
+        $requiredVarsWithValues->each(function ($expectedValue, $name) use ($failingVarNames, $failingVarMessages) {
+            $actualValue = getenv($name);
+            if ($expectedValue != $actualValue) {
+                $failingVarNames->push($name);
+                $failingVarMessages->push(trans('health-env-vars::translations.var_not_matching_value', [
+                    'name' => $name,
+                    'expected' => $expectedValue,
+                    'actual' => $actualValue,
+                ]));
+            }
+        });
+
+        if ($failingVarNames->isEmpty()) {
+            return CheckResultDto::ok();
+        }
+
+        return CheckResultDto::error(
+            meta: $failingVarNames->toArray(),
+            summary: trans('health-env-vars::translations.vars_not_matching_values'),
+            message: trans('health-env-vars::translations.vars_not_matching_values_list', [
+                'environment' => App::environment(),
+                'list' => $failingVarMessages->implode('; '),
+            ])
+        );
     }
 }
