@@ -8,11 +8,15 @@ uses(TestCase::class)->in(__DIR__);
 /**
  * Initialize .env variables with the given names and values
  *
- * @param  array<string, string>  $vars
+ * @param  array<string, mixed>  $vars
  */
 function initEnvVars(array $vars): void
 {
     foreach ($vars as $name => $value) {
+        if (is_bool($value)) {
+            $value = var_export($value, true);
+        }
+
         putenv("$name=$value");
     }
 }

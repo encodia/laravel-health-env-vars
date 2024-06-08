@@ -24,18 +24,30 @@ class EnvVars extends Check
     protected Collection $environmentSpecificVarsWithValues;
 
     /**
-     * Run the check and return the Result
+     * Run the check and return the Result.
      */
     public function run(): Result
     {
         $this->requiredVars ??= collect();
         $this->environmentSpecificVars ??= collect();
+
         $this->requiredVarsWithValues ??= collect();
+        $this->environmentSpecificVarsWithValues ??= collect();
+
+        /** @var string $currentEnvironment */
+        $currentEnvironment = App::environment();
 
         $result = Result::make();
 
-        // Check required vars with values
-        $check = $this->checkRequiredVarsWithValues($this->requiredVarsWithValues);
+        // Check variables matches their values
+
+        // Merge the non-environment-specific collection with the current-environment-specific one
+        $requiredVarsWithValues = $this->requiredVarsWithValues->merge(
+            $this->environmentSpecificVarsWithValues->get($currentEnvironment) ?? collect()
+        );
+
+        $check = $this->checkRequiredVarsWithValues($requiredVarsWithValues);
+
         if ($check->hasFailed()) {
             return $result->meta($check->meta)
                 ->shortSummary($check->summary)
@@ -55,8 +67,6 @@ class EnvVars extends Check
                 );
         }
 
-        /** @var string $currentEnvironment */
-        $currentEnvironment = App::environment();
         // Same for environment specific vars (if any), returning different error messages
         /** @var Collection<int,string> $environmentSpecificVars */
         $environmentSpecificVars = $this->environmentSpecificVars->get($currentEnvironment, collect());
@@ -78,7 +88,7 @@ class EnvVars extends Check
     }
 
     /**
-     * Require the given variable names to be set (no matter in which environment)
+     * Require the given variable names to be set (no matter in which environment).
      *
      * @param  array<int,string>  $names
      * @return $this
@@ -105,7 +115,7 @@ class EnvVars extends Check
     }
 
     /**
-     * Require the given variable names to be set in the given environment
+     * Require the given variable names to be set in the given environment.
      *
      * @param  array<int,string>  $names
      * @return $this
@@ -124,7 +134,24 @@ class EnvVars extends Check
     }
 
     /**
-     * Require the given variable names to be set in the given environments
+     * Require the given variable names to be set, in the current environment, to the values supplied.
+     *
+     * @param  array<string,mixed>  $values
+     * @return $this
+     */
+    public function requireVarsMatchValuesForEnvironment(string $environment, array $values): self
+    {
+        $this->environmentSpecificVarsWithValues ??= collect();
+
+        if (! $this->environmentSpecificVarsWithValues->has($environment)) {
+            $this->environmentSpecificVarsWithValues->put($environment, $values);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Require the given variable names to be set in the given environments.
      *
      * @param  array<int,string>  $environments
      * @param  array<int,string>  $names
@@ -132,14 +159,34 @@ class EnvVars extends Check
      */
     public function requireVarsForEnvironments(array $environments, array $names): self
     {
-        collect($environments)->each(fn ($environment) => $this->requireVarsForEnvironment($environment, $names));
+        collect($environments)
+            ->each(
+                fn (string $environment) => $this->requireVarsForEnvironment($environment, $names)
+            );
+
+        return $this;
+    }
+
+    /**
+     * Require the given variable names to be set, in the given environments, to the values supplied.
+     *
+     * @param  array<int,string>  $environments
+     * @param  array<string,mixed>  $values
+     * @return $this
+     */
+    public function requireVarsMatchValuesForEnvironments(array $environments, array $values): self
+    {
+        collect($environments)
+            ->each(
+                fn (string $environment) => $this->requireVarsMatchValuesForEnvironment($environment, $values)
+            );
 
         return $this;
     }
 
     /**
      * Given a Collection of $vars names, check which of them are not set (in the current environment)
-     * and return the list of names as a Collection
+     * and return the list of names as a Collection.
      *
      * @param  Collection<int,string>  $vars
      * @return Collection<int,string>
@@ -167,7 +214,8 @@ class EnvVars extends Check
         $failingVarMessages = collect();
 
         $requiredVarsWithValues->each(function ($expectedValue, $name) use ($failingVarNames, $failingVarMessages) {
-            $actualValue = getenv($name);
+            $actualValue = env($name);
+
             if ($expectedValue != $actualValue) {
                 $failingVarNames->push($name);
                 $failingVarMessages->push(trans('health-env-vars::translations.var_not_matching_value', [
