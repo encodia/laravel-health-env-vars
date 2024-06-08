@@ -17,10 +17,10 @@ class EnvVars extends Check
     /** @var Collection<string,mixed> */
     protected Collection $requiredVarsWithValues;
 
-    /** @var Collection<string,string> */
+    /** @var Collection<string,Collection<int,string>> */
     protected Collection $environmentSpecificVars;
 
-    /** @var Collection<string,array<string,mixed>> */
+    /** @var Collection<string,Collection<string,mixed>> */
     protected Collection $environmentSpecificVarsWithValues;
 
     /**
@@ -55,29 +55,18 @@ class EnvVars extends Check
         }
 
         // Check all provided variable names match .env variables with non-empty value
-        $missingVars = $this->missingVars($this->requiredVars);
+
+        // Merge the non-environment-specific collection with the current-environment-specific one
+        $requiredVars = $this->requiredVars->merge(
+            $this->environmentSpecificVars->get($currentEnvironment) ?? []
+        );
+        $missingVars = $this->missingVars($requiredVars);
 
         if ($missingVars->count() > 0) {
             return $result->meta($missingVars->toArray())
                 ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
                 ->failed(
                     trans('health-env-vars::translations.missing_vars_list', [
-                        'list' => $missingVars->implode(','),
-                    ])
-                );
-        }
-
-        // Same for environment specific vars (if any), returning different error messages
-        /** @var Collection<int,string> $environmentSpecificVars */
-        $environmentSpecificVars = $this->environmentSpecificVars->get($currentEnvironment, collect());
-        $missingVars = $this->missingVars($environmentSpecificVars);
-
-        if ($missingVars->count() > 0) {
-            return $result->meta($missingVars->toArray())
-                ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
-                ->failed(
-                    trans('health-env-vars::translations.missing_vars_list', [
-                        'environment' => App::environment(),
                         'list' => $missingVars->implode(','),
                     ])
                 );
@@ -144,7 +133,7 @@ class EnvVars extends Check
         $this->environmentSpecificVarsWithValues ??= collect();
 
         if (! $this->environmentSpecificVarsWithValues->has($environment)) {
-            $this->environmentSpecificVarsWithValues->put($environment, $values);
+            $this->environmentSpecificVarsWithValues->put($environment, collect($values));
         }
 
         return $this;
