@@ -11,142 +11,211 @@ it('returns ok when no variable names have been provided', function () {
         ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
-it('returns ok when an empty set of variable names has been provided', function () {
-    $result = EnvVars::new()
-        ->requireVars([])
-        ->run();
+describe('when vars need to be set', function () {
+    it('returns ok when an empty set of variable names has been provided', function () {
+        $result = EnvVars::new()
+            ->requireVars([])
+            ->run();
 
-    expect($result)
-        ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
-});
+        expect($result)
+            ->status->toBe(Status::ok())
+            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+    });
 
-it('returns ok when every provided name matches a .env variable with a non-empty value', function () {
-    // GIVEN some .env variables which has been initialized with a non-empty value
-    initEnvVars([
-        'ENV_VAR1' => 'foo',
-        'ENV_VAR2' => 'bar',
-    ]);
-
-    $result = EnvVars::new()
-        ->requireVars([
-            'ENV_VAR1',
-            'ENV_VAR2',
-        ])
-        ->run();
-
-    expect($result)
-        ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
-});
-
-it('returns an error when not every provided name matches a .env variable with a non-empty value', function () {
-    $missingList = ['ENV_VAR1'];
-
-    // GIVEN some .env variables which has been initialized with a non-empty value and one variable which has an
-    // empty value
-    initEnvVars([
-        'ENV_VAR1' => '',
-        'ENV_VAR2' => 'bar',
-    ]);
-
-    $result = EnvVars::new()
-        ->requireVars([
-            'ENV_VAR1',
-            'ENV_VAR2',
-        ])
-        ->run();
-
-    expect($result)
-        ->status->toBe(Status::failed())
-        ->meta->toEqual($missingList)
-        ->shortSummary->toBe(trans('health-env-vars::translations.not_every_var_has_been_set'))
-        ->notificationMessage->toBe(
-            trans('health-env-vars::translations.missing_vars_list', ['list' => implode(', ', $missingList)])
-        );
-});
-
-it(
-    'returns ok if environment specific vars have been set and the environment matches the current one',
-    function () {
-        $varName = 'ENV_PROD_VAR1';
-        $specificEnvironment = 'production';
-
-        mockCurrentEnvironment($specificEnvironment);
+    it('returns ok when every provided name matches a .env variable with a non-empty value', function () {
+        // GIVEN some .env variables which has been initialized with a non-empty value
         initEnvVars([
-            $varName => 'some_value',
+            'ENV_VAR1' => 'foo',
+            'ENV_VAR2' => 'bar',
         ]);
-        // ensure code is running in the same environment we're testing that a var has been set
-        expect(currentEnvironment())->toEqual($specificEnvironment);
 
         $result = EnvVars::new()
-            ->requireVarsForEnvironment($specificEnvironment, [
-                $varName,
+            ->requireVars([
+                'ENV_VAR1',
+                'ENV_VAR2',
             ])
             ->run();
 
         expect($result)
             ->status->toBe(Status::ok())
             ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
-    }
-);
+    });
 
-test('environment specific vars are ignored if their environment does not match current one', function () {
-    $varName = 'ENV_PROD_VAR1';
-    $specificEnvironment = 'production';
+    it('returns an error when not every provided name matches a .env variable with a non-empty value', function () {
+        $missingList = ['ENV_VAR1'];
 
-    // ensure code is running in an environment different from the one we're testing a var has been set
-    expect(app()->environment())->not->toEqual($specificEnvironment);
-    // ensure in the current environment the given var has not been set
-    initEnvVars([$varName => null]);
+        // GIVEN some .env variables which has been initialized with a non-empty value and one variable which has an
+        // empty value
+        initEnvVars([
+            'ENV_VAR1' => '',
+            'ENV_VAR2' => 'bar',
+        ]);
 
-    $result = EnvVars::new()
-        ->requireVarsForEnvironment('production', [
-            $varName,
-        ])
-        ->run();
-
-    expect($result)
-        ->status->toBe(Status::ok())
-        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
-});
-
-it('returns an error if environment specific vars are required and they are not set in that environment', function () {
-    $varName = 'ENV_PROD_VAR1';
-    $missingList = [$varName];
-    $specificEnvironment = 'production';
-
-    // ensure code is running in an environment different from the one we're testing that a var has been set
-    expect(currentEnvironment())->not->toEqual($specificEnvironment);
-    // ensure in the current environment the given var has not been set
-    initEnvVars([$varName => null]);
-
-    // WHEN switching to the desired environment...
-    mockCurrentEnvironment('production');
-
-    $result = EnvVars::new()
-        ->requireVarsForEnvironment('production', [
-            $varName,
-        ])
-        ->run();
-
-    expect($result)
-        ->status->toBe(Status::failed())
-        ->shortSummary->toBe(trans('health-env-vars::translations.not_every_var_has_been_set'))
-        ->notificationMessage->toBe(
-            trans('health-env-vars::translations.missing_vars_list_in_environment', [
-                'environment' => currentEnvironment(),
-                'list' => implode(', ', $missingList),
+        $result = EnvVars::new()
+            ->requireVars([
+                'ENV_VAR1',
+                'ENV_VAR2',
             ])
-        );
+            ->run();
+
+        expect($result)
+            ->status->toBe(Status::failed())
+            ->meta->toEqual($missingList)
+            ->shortSummary->toBe(trans('health-env-vars::translations.not_every_var_has_been_set'))
+            ->notificationMessage->toBe(
+                trans('health-env-vars::translations.missing_vars_list', ['list' => implode(', ', $missingList)])
+            );
+    });
 });
 
-test('several specific environment vars can be specified', function () {
-    $result = EnvVars::new()
-        ->requireVarsForEnvironment('staging', ['VAR1'])
-        ->requireVarsForEnvironment('production', ['VAR2'])
-        ->run();
+describe('when vars need to match values', function () {
+    it(
+        "returns an error if a var doesn't match the expected value in the current environment",
+        function (string $currentEnvironment) {
+            // ARRANGE
 
-    expect($result)
-        ->status->toBe(Status::ok());
+            $environments = ENVIRONMENTS;
+            $variableName = 'VAR1';
+            $variableExpectedValue = 'expected value';
+            $variableActualValue = 'another value';
+            $missingList = trans('health-env-vars::translations.var_not_matching_value', [
+                'name' => $variableName,
+                'actual' => $variableActualValue,
+                'expected' => $variableExpectedValue,
+            ]);
+
+            expect($currentEnvironment)->toBeIn($environments);
+            mockCurrentEnvironment($currentEnvironment);
+
+            // init variable with a value different from the expected one
+            initEnvVars([
+                $variableName => $variableActualValue,
+            ]);
+            expect(env($variableName))->not->toEqual($variableExpectedValue);
+
+            // ACT & ASSERT
+            $result = EnvVars::new()
+                ->requireVarsMatchValues([
+                    $variableName => $variableExpectedValue,
+                ])
+                ->run();
+
+            expect($result)
+                ->meta->toEqual([$variableName])
+                ->status->toBe(Status::failed())
+                ->shortSummary->toBe(trans('health-env-vars::translations.vars_not_matching_values'))
+                ->notificationMessage->toBe(
+                    trans('health-env-vars::translations.vars_not_matching_values_list', [
+                        'list' => $missingList,
+                    ])
+                );
+        }
+    )->with([ENVIRONMENT_STAGING]);
+
+    it(
+        'returns OK if all vars match the expected values in the current environment',
+        function (string $currentEnvironment) {
+            // ARRANGE
+
+            $environments = ENVIRONMENTS;
+            $varsWithValues = [
+                'VAR1' => 'Some value',
+                'VAR2' => 42,
+                'VAR3' => false,
+            ];
+
+            expect($currentEnvironment)->toBeIn($environments);
+            mockCurrentEnvironment($currentEnvironment);
+
+            // init variable with a value different from the expected one
+            initEnvVars($varsWithValues);
+
+            // ACT & ASSERT
+            $result = EnvVars::new()
+                ->requireVarsMatchValues($varsWithValues)
+                ->run();
+
+            expect($result)
+                ->status->toBe(Status::ok())
+                ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+        }
+    )->with([ENVIRONMENT_STAGING]);
+});
+
+describe('when vars need to match values for a single environment', function () {
+    it(
+        "fails if at least one var doesn't match its value for the current environment ",
+        function (string $environment) {
+            // ARRANGE
+            mockCurrentEnvironment($environment);
+
+            $variableName = 'VAR2';
+            $variableActualValue = 'different';
+            $variableExpectedValue = 'bar';
+            $vars = [
+                'VAR1' => 'foo',
+                $variableName => $variableActualValue,
+            ];
+            initEnvVars($vars);
+
+            // ACT & ASSERT
+            $missingList = trans('health-env-vars::translations.var_not_matching_value', [
+                'name' => $variableName,
+                'actual' => $variableActualValue,
+                'expected' => $variableExpectedValue,
+            ]);
+
+            $result = EnvVars::new()
+                ->requireVarsMatchValuesForEnvironment($environment, [
+                    'VAR1' => 'foo',
+                    'VAR2' => $variableExpectedValue,
+                ])
+                ->run();
+
+            expect($result)
+                ->status->toBe(Status::failed())
+                ->shortSummary->toBe(trans('health-env-vars::translations.vars_not_matching_values'))
+                ->notificationMessage->toBe(
+                    trans('health-env-vars::translations.vars_not_matching_values_list', [
+                        'list' => $missingList,
+                    ])
+                );
+        }
+    )->with([ENVIRONMENT_STAGING]);
+
+    it('returns OK if vars match their values for the current environment ', function (string $environment) {
+        // ARRANGE
+        mockCurrentEnvironment($environment);
+        $vars = [
+            'VAR1' => 'foo',
+        ];
+        initEnvVars($vars);
+
+        // ACT & ASSERT
+        $result = EnvVars::new()
+            ->requireVarsMatchValuesForEnvironment($environment, $vars)
+            ->run();
+
+        expect($result)
+            ->status->toBe(Status::ok())
+            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+    })->with([ENVIRONMENT_STAGING]);
+
+    it('returns OK if vars does not match their values in another environment ', function (string $environment) {
+        // ARRANGE
+        mockCurrentEnvironment($environment);
+        $vars = [
+            'VAR1' => 'foo',
+        ];
+        initEnvVars($vars);
+
+        // ACT & ASSERT
+        $result = EnvVars::new()
+            ->requireVarsMatchValuesForEnvironment(ENVIRONMENT_PRODUCTION, $vars)
+            ->run();
+
+        expect($result)
+            ->status->toBe(Status::ok())
+            ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+    })->with([ENVIRONMENT_STAGING]);
 });

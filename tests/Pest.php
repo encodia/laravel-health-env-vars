@@ -5,6 +5,12 @@ use Illuminate\Support\Facades\App;
 
 uses(TestCase::class)->in(__DIR__);
 
+const ENVIRONMENT_STAGING = 'staging';
+const ENVIRONMENT_QA = 'qa';
+const ENVIRONMENT_PRODUCTION = 'production';
+
+const ENVIRONMENTS = [ENVIRONMENT_STAGING, ENVIRONMENT_QA, ENVIRONMENT_PRODUCTION];
+
 /**
  * Initialize .env variables with the given names and values
  *

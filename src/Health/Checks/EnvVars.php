@@ -39,7 +39,7 @@ class EnvVars extends Check
 
         $result = Result::make();
 
-        // Check variables matches their values
+        // Check variables match their values
 
         // Merge the non-environment-specific collection with the current-environment-specific one
         $requiredVarsWithValues = $this->requiredVarsWithValues->merge(
@@ -76,7 +76,7 @@ class EnvVars extends Check
             return $result->meta($missingVars->toArray())
                 ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
                 ->failed(
-                    trans('health-env-vars::translations.missing_vars_list_in_environment', [
+                    trans('health-env-vars::translations.missing_vars_list', [
                         'environment' => App::environment(),
                         'list' => $missingVars->implode(','),
                     ])
@@ -234,7 +234,6 @@ class EnvVars extends Check
             meta: $failingVarNames->toArray(),
             summary: trans('health-env-vars::translations.vars_not_matching_values'),
             message: trans('health-env-vars::translations.vars_not_matching_values_list', [
-                'environment' => App::environment(),
                 'list' => $failingVarMessages->implode('; '),
             ])
         );
