@@ -202,7 +202,7 @@ class EnvVars extends Check
         $failingVarNames = collect();
         $failingVarMessages = collect();
 
-        $requiredVarsWithValues->each(function ($expectedValue, $name) use ($failingVarNames, $failingVarMessages) {
+        $requiredVarsWithValues->each(function (mixed $expectedValue, string $name) use ($failingVarNames, $failingVarMessages) {
             $actualValue = env($name);
 
             if ($expectedValue !== $actualValue) {
