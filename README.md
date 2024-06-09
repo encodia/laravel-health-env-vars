@@ -11,6 +11,8 @@ in addition to providing some default checks, allows you to create your own.
 
 This package checks if all variables you need have been set in your `.env` file.
 
+Starting from **v1.8.0**, you can also ensure a variable has been set to a certain value.
+
 Some variables are needed in every environment; others only in specific ones.
 For example, you want to be sure that `BUGSNAG_API_KEY` has been set in your production
 environment, but you don't need this while developing locally.
@@ -72,10 +74,8 @@ Need to check only in a specific environment if a variable has been set?
 No problem:
 
 ```php
-// typically, in a service provider
 
 use Spatie\Health\Facades\Health;
-use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Encodia\Health\Checks\EnvVars;
 
 Health::checks([
@@ -115,13 +115,12 @@ For example, you need to set `BUGSNAG_API_KEY` only in these environments:
 
 but not in `local`, `staging`, `demo` or whatever.
 
-You could chain multiple `requireVarsForEnvironment` calls but, in this case, it's to use `requireVarsForEnvironments`:
+You could chain multiple `requireVarsForEnvironment` calls but, in this case, it's better to
+use `requireVarsForEnvironments`:
 
 ```php
-// typically, in a service provider
 
 use Spatie\Health\Facades\Health;
-use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Encodia\Health\Checks\EnvVars;
 
 Health::checks([
@@ -151,6 +150,45 @@ Health::checks([
         ]);
 ]);
 ```
+
+Need to check if a variable has been set to a specific value?
+
+Starting from **v1.8.0**, you can use `requireVarsMatchValues` to perform this check, regardless of the current
+environment.
+
+If you need to run this check only if the current environment matches the given one(s), you can
+use `requireVarsForEnvironment` or `requireVarsForEnvironments`.
+
+Examples:
+
+```php
+
+use Encodia\Health\Checks\EnvVars;
+use Spatie\Health\Facades\Health;
+
+Health::checks([
+    EnvVars::new()
+        // ... other methods ...
+        ->requireVarsMatchValues([
+            // Ensure that APP_LOCALE is set to 'en' (no matter which is the current environment)
+            'APP_LOCALE' => 'en',
+            // Ensure that APP_TIMEZONE is set to 'UTC' (no matter which is the current environment)
+            'APP_TIMEZONE' => 'UTC',
+        ])
+        ->requireVarsMatchValuesForEnvironment('staging', [
+            // Only if current environment is 'staging', we don't want to send e-mails to real customers
+            'MAIL_MAILER' => 'log',        
+        ])
+        ->requireVarsMatchValuesForEnvironments(['qa', 'production'], [
+            // Only if current environment is 'qa' or 'production, we want to log 'info' events or above
+            'LOG_LEVEL' => 'info',
+            // Only if current environment is 'qa' or 'production, we want to store assets to S3
+            'FILESYSTEM_DISK' => 's3',        
+        ]);
+]);
+```
+
+⚠️ When checking values, do not store personal data, keys, tokens, etc.!
 
 ## Caveats
 

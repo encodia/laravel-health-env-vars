@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.8.0 - 2024-06-09
+
+### added
+
+- add `requireVarsMatchValues`: check if the given variables have been set to the given values
+- add `requireVarsForEnvironment` and `requireVarsForEnvironments`: same as `requireVarsMatchValues`, but check is
+  performed only if the current environment matches the given one(s)
+
+### changed
+
+- refactor code
+
 ## v.1.7.0 - 2024-03-13
 
 ### added
