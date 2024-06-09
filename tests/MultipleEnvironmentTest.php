@@ -12,7 +12,7 @@ describe('when vars need to be set', function () {
         'returns ok if environment specific vars have been set and the environment matches the current one',
         function () {
             $varName = 'ENV_PROD_VAR1';
-            $specificEnvironment = 'production';
+            $specificEnvironment = ENVIRONMENT_PRODUCTION;
 
             mockCurrentEnvironment($specificEnvironment);
             initEnvVars([
@@ -35,7 +35,7 @@ describe('when vars need to be set', function () {
 
     test('environment specific vars are ignored if their environment does not match current one', function () {
         $varName = 'ENV_PROD_VAR1';
-        $specificEnvironment = 'production';
+        $specificEnvironment = ENVIRONMENT_PRODUCTION;
 
         // ensure code is running in an environment different from the one we're testing a var has been set
         expect(app()->environment())->not->toEqual($specificEnvironment);
@@ -43,7 +43,7 @@ describe('when vars need to be set', function () {
         initEnvVars([$varName => null]);
 
         $result = EnvVars::new()
-            ->requireVarsForEnvironment('production', [
+            ->requireVarsForEnvironment(ENVIRONMENT_PRODUCTION, [
                 $varName,
             ])
             ->run();
@@ -58,7 +58,7 @@ describe('when vars need to be set', function () {
         function () {
             $varName = 'ENV_PROD_VAR1';
             $missingList = [$varName];
-            $specificEnvironment = 'production';
+            $specificEnvironment = ENVIRONMENT_PRODUCTION;
 
             // ensure code is running in an environment different from the one we're testing that a var has been set
             expect(currentEnvironment())->not->toEqual($specificEnvironment);
@@ -66,10 +66,10 @@ describe('when vars need to be set', function () {
             initEnvVars([$varName => null]);
 
             // WHEN switching to the desired environment...
-            mockCurrentEnvironment('production');
+            mockCurrentEnvironment(ENVIRONMENT_PRODUCTION);
 
             $result = EnvVars::new()
-                ->requireVarsForEnvironment('production', [
+                ->requireVarsForEnvironment(ENVIRONMENT_PRODUCTION, [
                     $varName,
                 ])
                 ->run();
@@ -148,8 +148,8 @@ describe('when vars need to be set', function () {
 
     test('several specific environment vars can be specified', function () {
         $result = EnvVars::new()
-            ->requireVarsForEnvironment('staging', ['VAR1'])
-            ->requireVarsForEnvironment('production', ['VAR2'])
+            ->requireVarsForEnvironment(ENVIRONMENT_STAGING, ['VAR1'])
+            ->requireVarsForEnvironment(ENVIRONMENT_PRODUCTION, ['VAR2'])
             ->run();
 
         expect($result)
@@ -176,8 +176,8 @@ describe('when vars need to match values for multiple environments', function ()
             // ACT & ASSERT
             $missingList = trans('health-env-vars::translations.var_not_matching_value', [
                 'name' => $variableName,
-                'actual' => $variableActualValue,
-                'expected' => $variableExpectedValue,
+                'actual' => EnvVars::displayableValueOf($variableActualValue),
+                'expected' => EnvVars::displayableValueOf($variableExpectedValue),
             ]);
 
             $result = EnvVars::new()

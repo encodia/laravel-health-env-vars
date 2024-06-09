@@ -80,8 +80,8 @@ describe('when vars need to match values', function () {
             $variableActualValue = 'another value';
             $missingList = trans('health-env-vars::translations.var_not_matching_value', [
                 'name' => $variableName,
-                'actual' => $variableActualValue,
-                'expected' => $variableExpectedValue,
+                'actual' => EnvVars::displayableValueOf($variableActualValue),
+                'expected' => EnvVars::displayableValueOf($variableExpectedValue),
             ]);
 
             expect($currentEnvironment)->toBeIn($environments);
@@ -120,7 +120,7 @@ describe('when vars need to match values', function () {
             $environments = ENVIRONMENTS;
             $varsWithValues = [
                 'VAR1' => 'Some value',
-                'VAR2' => 42,
+                'VAR2' => '42',
                 'VAR3' => false,
             ];
 
@@ -161,8 +161,8 @@ describe('when vars need to match values for a single environment', function () 
             // ACT & ASSERT
             $missingList = trans('health-env-vars::translations.var_not_matching_value', [
                 'name' => $variableName,
-                'actual' => $variableActualValue,
-                'expected' => $variableExpectedValue,
+                'actual' => EnvVars::displayableValueOf($variableActualValue),
+                'expected' => EnvVars::displayableValueOf($variableExpectedValue),
             ]);
 
             $result = EnvVars::new()

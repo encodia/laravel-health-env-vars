@@ -185,7 +185,7 @@ class EnvVars extends Check
         $missingVars = Collection::empty();
 
         $vars->each(function (string $name) use ($missingVars) {
-            $value = getenv($name);
+            $value = env($name);
             if (! $value) {
                 $missingVars->push($name);
             }
@@ -205,12 +205,12 @@ class EnvVars extends Check
         $requiredVarsWithValues->each(function ($expectedValue, $name) use ($failingVarNames, $failingVarMessages) {
             $actualValue = env($name);
 
-            if ($expectedValue != $actualValue) {
+            if ($expectedValue !== $actualValue) {
                 $failingVarNames->push($name);
                 $failingVarMessages->push(trans('health-env-vars::translations.var_not_matching_value', [
                     'name' => $name,
-                    'expected' => $expectedValue,
-                    'actual' => $actualValue,
+                    'expected' => self::displayableValueOf($expectedValue),
+                    'actual' => self::displayableValueOf($actualValue),
                 ]));
             }
         });
@@ -226,5 +226,18 @@ class EnvVars extends Check
                 'list' => $failingVarMessages->implode('; '),
             ])
         );
+    }
+
+    public static function displayableValueOf(mixed $var): mixed
+    {
+        if (is_bool($var)) {
+            return var_export($var, true);
+        }
+
+        if (is_string($var)) {
+            return '"'.$var.'"';
+        }
+
+        return $var;
     }
 }
