@@ -186,7 +186,8 @@ class EnvVars extends Check
 
         $vars->each(function (string $name) use ($missingVars) {
             $value = env($name);
-            if (! $value) {
+
+            if ($value === null) {
                 $missingVars->push($name);
             }
         });

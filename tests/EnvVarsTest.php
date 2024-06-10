@@ -3,6 +3,10 @@
 use Encodia\Health\Checks\EnvVars;
 use Spatie\Health\Enums\Status;
 
+afterEach(function () {
+    unsetEnvVars(['VAR1', 'VAR2', 'VAR3', 'VAR4', 'ENV_VAR1', 'ENV_VAR2', 'ENV_PROD_VAR1']);
+});
+
 it('returns ok when no variable names have been provided', function () {
     $result = EnvVars::new()->run();
 
@@ -40,15 +44,32 @@ it('returns ok when every provided name matches a .env variable with a non-empty
         ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 });
 
+it('returns ok when a boolean variable is initialized to false', function () {
+    initEnvVars([
+        'ENV_VAR1' => false,
+    ]);
+
+    $result = EnvVars::new()
+        ->requireVars([
+            'ENV_VAR1',
+        ])
+        ->run();
+
+    expect($result)
+        ->status->toBe(Status::ok())
+        ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
+});
+
 it('returns an error when not every provided name matches a .env variable with a non-empty value', function () {
     $missingList = ['ENV_VAR1'];
 
-    // GIVEN some .env variables which has been initialized with a non-empty value and one variable which has an
-    // empty value
+    // GIVEN one .env variable which has been initialized with a non-empty value and one variable which has not
+    // been declared
     initEnvVars([
-        'ENV_VAR1' => '',
         'ENV_VAR2' => 'bar',
     ]);
+
+    expect(env('ENV_VAR1'))->toBeNull();
 
     $result = EnvVars::new()
         ->requireVars([

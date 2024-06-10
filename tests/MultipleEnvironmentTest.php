@@ -62,7 +62,7 @@ it(
         // ensure code is running in an environment different from the one we're testing that a var has been set
         expect(currentEnvironment())->not->toEqual($specificEnvironment);
         // ensure in the current environment the given var has not been set
-        initEnvVars([$varName => null]);
+        expect(env($varName))->toBeNull();
 
         // WHEN switching to the desired environment...
         mockCurrentEnvironment(ENVIRONMENT_PRODUCTION);
