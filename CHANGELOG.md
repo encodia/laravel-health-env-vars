@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.8.1 - 2024-06-10
+
+### fixed
+
+- an `env()` variable initialized to `false` was evaluated as missing
+
 ## v.1.8.0 - 2024-06-09
 
 ### added
