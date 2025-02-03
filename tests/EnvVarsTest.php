@@ -265,6 +265,5 @@ it('returns ok when configuration is cached', function () {
     expect($result)
         ->status->toBe(Status::ok())
         ->meta->toEqual([])
-        ->shortSummary->toEqual($message)
-        ->notificationMessage->toEqual($message);
+        ->shortSummary->toEqual($message);
 });

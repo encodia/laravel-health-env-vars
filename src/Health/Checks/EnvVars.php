@@ -32,8 +32,8 @@ class EnvVars extends Check
             $message = trans('health-env-vars::translations.config_is_cached_check_is_skipped');
 
             return Result::make()
-                ->shortSummary($message)
-                ->ok($message);
+                ->ok()
+                ->shortSummary($message);
         }
 
         $this->requiredVars ??= collect();

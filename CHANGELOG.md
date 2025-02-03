@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.9.1 - 2025-02-03
+
+### fixed
+
+- don't send a notification when configuration is cached
+
 ## v.1.9.0 - 2025-02-03
 
 ### changed
