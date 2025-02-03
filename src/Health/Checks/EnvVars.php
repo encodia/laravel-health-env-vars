@@ -28,6 +28,14 @@ class EnvVars extends Check
      */
     public function run(): Result
     {
+        if (App::configurationIsCached()) {
+            $message = trans('health-env-vars::translations.config_is_cached_check_is_skipped');
+
+            return Result::make()
+                ->shortSummary($message)
+                ->ok($message);
+        }
+
         $this->requiredVars ??= collect();
         $this->environmentSpecificVars ??= collect();
 

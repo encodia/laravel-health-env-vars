@@ -1,6 +1,7 @@
 <?php
 
 use Encodia\Health\Checks\EnvVars;
+use Illuminate\Support\Facades\App;
 use Spatie\Health\Enums\Status;
 
 afterEach(function () {
@@ -234,3 +235,36 @@ it('returns OK if vars does not match their values in another environment ', fun
         ->status->toBe(Status::ok())
         ->shortSummary->toBe(trans('health-env-vars::translations.every_var_has_been_set'));
 })->with([ENVIRONMENT_STAGING]);
+
+it('returns ok when configuration is cached', function () {
+    // ARRANGE
+
+    App::shouldReceive('configurationIsCached')
+        ->once()
+        ->andReturn(true);
+
+    $missingList = ['ENV_VAR1'];
+
+    // GIVEN one .env variable which has been initialized with a non-empty value and one variable which has not
+    // been declared
+    initEnvVars([
+        'ENV_VAR2' => 'bar',
+    ]);
+
+    expect(env('ENV_VAR1'))->toBeNull();
+
+    $result = EnvVars::new()
+        ->requireVars([
+            'ENV_VAR1',
+            'ENV_VAR2',
+        ])
+        ->run();
+
+    $message = trans('health-env-vars::translations.config_is_cached_check_is_skipped');
+
+    expect($result)
+        ->status->toBe(Status::ok())
+        ->meta->toEqual([])
+        ->shortSummary->toEqual($message)
+        ->notificationMessage->toEqual($message);
+});

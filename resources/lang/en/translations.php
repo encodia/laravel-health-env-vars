@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'config_is_cached_check_is_skipped' => 'Configuration is cached: this check is skipped',
     'every_var_has_been_set' => 'Every required .env variable has been set',
     'missing_vars_list' => 'Missing .env variables: :list',
     'not_every_var_has_been_set' => 'Not every required .env variable has been set!',

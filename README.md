@@ -203,6 +203,10 @@ Please check
 * [Laravel documentation](https://laravel.com/docs/9.x/configuration#configuration-caching)
 * [env() Gotcha in Laravel When Caching Configuration](https://andy-carter.com/blog/env-gotcha-in-laravel-when-caching-configuration)
 
+> [!IMPORTANT]  
+> From version `1.9.0`, when configuration is cached (e.g. via `php artisan config:cache`), these checks are bypassed
+> and they return `OK`.
+
 ## Testing
 
 ```bash

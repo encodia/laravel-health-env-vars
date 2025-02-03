@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.9.0 - 2025-02-03
+
+### changed
+
+- when configuration is cached, bypass checks and return `OK`
+
 ## v.1.8.1 - 2024-06-10
 
 ### fixed
