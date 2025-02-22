@@ -29,6 +29,7 @@ class EnvVars extends Check
     public function run(): Result
     {
         if (App::configurationIsCached()) {
+            /** @var string $message */
             $message = trans('health-env-vars::translations.config_is_cached_check_is_skipped');
 
             return Result::make()
@@ -71,17 +72,25 @@ class EnvVars extends Check
         $missingVars = $this->missingVars($requiredVars);
 
         if ($missingVars->count() > 0) {
-            return $result->meta($missingVars->toArray())
-                ->shortSummary(trans('health-env-vars::translations.not_every_var_has_been_set'))
-                ->failed(
-                    trans('health-env-vars::translations.missing_vars_list', [
-                        'list' => $missingVars->implode(','),
-                    ])
-                );
+            /** @var array<string,string> $meta */
+            $meta = $missingVars->toArray();
+            /** @var string $shortSummary */
+            $shortSummary = trans('health-env-vars::translations.not_every_var_has_been_set');
+            /** @var string $message */
+            $message = trans('health-env-vars::translations.missing_vars_list', [
+                'list' => $missingVars->implode(','),
+            ]);
+
+            return $result->meta($meta)
+                ->shortSummary($shortSummary)
+                ->failed($message);
         }
 
+        /** @var string $shortSummary */
+        $shortSummary = trans('health-env-vars::translations.every_var_has_been_set');
+
         return $result->ok()
-            ->shortSummary(trans('health-env-vars::translations.every_var_has_been_set'));
+            ->shortSummary($shortSummary);
     }
 
     /**
@@ -228,12 +237,17 @@ class EnvVars extends Check
             return CheckResultDto::ok();
         }
 
+        /** @var string $summary */
+        $summary = trans('health-env-vars::translations.vars_not_matching_values');
+        /** @var string $message */
+        $message = trans('health-env-vars::translations.vars_not_matching_values_list', [
+            'list' => $failingVarMessages->implode('; '),
+        ]);
+
         return CheckResultDto::error(
             meta: $failingVarNames->toArray(),
-            summary: trans('health-env-vars::translations.vars_not_matching_values'),
-            message: trans('health-env-vars::translations.vars_not_matching_values_list', [
-                'list' => $failingVarMessages->implode('; '),
-            ])
+            summary: $summary,
+            message: $message
         );
     }
 
