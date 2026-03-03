@@ -268,13 +268,12 @@ it('returns ok when configuration is cached', function () {
         ->shortSummary->toEqual($message);
 });
 
-describe('when calling displayableValueOf', function () {
-    it('returns the value as is if it is a string', function (mixed $value, mixed $displayableValue) {
-        expect(EnvVars::displayableValueOf($value))->toBe($displayableValue);
-    })->with([
-        ['foo', '"foo"'],
-        [123, 123],
-        [true, 'true'],
-        [null, null],
-    ]);
-});
+
+it('returns the displayable value of a variable', function (mixed $value, mixed $displayableValue) {
+    expect(EnvVars::displayableValueOf($value))->toBe($displayableValue);
+})->with([
+    ['foo', '"foo"'],
+    [123, 123],
+    [true, 'true'],
+    [null, null],
+]);
