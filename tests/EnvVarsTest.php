@@ -268,7 +268,6 @@ it('returns ok when configuration is cached', function () {
         ->shortSummary->toEqual($message);
 });
 
-
 it('returns the displayable value of a variable', function (mixed $value, mixed $displayableValue) {
     expect(EnvVars::displayableValueOf($value))->toBe($displayableValue);
 })->with([
