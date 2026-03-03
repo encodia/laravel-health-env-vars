@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-health-env-vars` will be documented in this file.
 
+## v.1.11.0 - 2026-03-03
+
+### added
+
+- Laravel 13 support
+- PHP 8.5 support
+
 ## v.1.10.0 - 2025-02-22
 
 ### added

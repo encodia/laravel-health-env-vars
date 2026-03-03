@@ -30,10 +30,13 @@ something is not working because one or more variables have not been valued?
 
 **PHP 8.2+** is required with **Laravel 11** and **Laravel 12**.
 
+**PHP 8.3+** is required with **Laravel 13**.
+
 ## Version compatibility
 
 | Laravel    | This package |
 |------------|--------------|
+| 13.x       | 1.11.0       |
 | 12.x       | 1.10.0       |
 | 8.x - 11.x | 1.9.1        |
 
