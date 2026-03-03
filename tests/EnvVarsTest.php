@@ -267,3 +267,14 @@ it('returns ok when configuration is cached', function () {
         ->meta->toEqual([])
         ->shortSummary->toEqual($message);
 });
+
+describe('when calling displayableValueOf', function () {
+    it('returns the value as is if it is a string', function (mixed $value, mixed $displayableValue) {
+        expect(EnvVars::displayableValueOf($value))->toBe($displayableValue);
+    })->with([
+        ['foo', '"foo"'],
+        [123, 123],
+        [true, "true"],
+        [null, null],
+    ]);
+});
