@@ -274,7 +274,7 @@ describe('when calling displayableValueOf', function () {
     })->with([
         ['foo', '"foo"'],
         [123, 123],
-        [true, "true"],
+        [true, 'true'],
         [null, null],
     ]);
 });
