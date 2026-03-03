@@ -233,7 +233,7 @@ class EnvVars extends Check
             }
         });
 
-        if ($failingVarNames->isEmpty()) {
+        if ($failingVarNames->count() === 0) {
             return CheckResultDto::ok();
         }
 
